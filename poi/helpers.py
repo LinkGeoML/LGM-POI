@@ -27,10 +27,10 @@ def parse_yaml(yml_file):
 
 
 header = [
-    'geodata_id',
-    'geodata_name',
-    'geodata_tags',
-    'geodata_geom',
+    'source_id',
+    'source_name',
+    'source_tags',
+    'source_geom',
     'osm_id',
     'osm_name',
     'osm_tags',
