@@ -22,9 +22,9 @@ It should install all the required libraries automatically (*scikit-learn, numpy
 
 Usage
 -----
-The execution of the project starts with downloading the OSM POIs which are relative to the computed area of 
-input source provided and identifies the best matches utilizing name, tags and spatial closeness. The best matches
-are saved to file **pois_dataset_pairs** under **output** folder.
+The execution of the project starts with downloading the OSM POIs which are relative to the computed area of the
+provided input source and identifies the best candidate matches utilizing name, tags and spatial closeness. Afterwards,
+these matches are saved to the **pois_dataset_pairs** file under the **output** folder.
 
 The above process can be executed successfully with the following command:
 
