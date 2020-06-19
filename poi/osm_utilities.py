@@ -199,8 +199,8 @@ def get_clusters_bboxes(X, labels):
         xmax, ymax = cluster_points.max(axis=0) + cfg.osm_buffer
         bboxes[i] = [xmin, ymin, xmax, ymax]
     # print({k: v for k, v in sorted(bboxes.items(), key=lambda item: item[1][0])})
-    print(sorted(bboxes.items(), key=lambda item: item[1][1])[0][1][1],
-          sorted(bboxes.items(), key=lambda item: item[1][0])[0][1][0],
-          sorted(bboxes.items(), key=lambda item: item[1][3], reverse=True)[0][1][3],
-          sorted(bboxes.items(), key=lambda item: item[1][2], reverse=True)[0][1][2],)
+    # print(sorted(bboxes.items(), key=lambda item: item[1][1])[0][1][1],
+    #       sorted(bboxes.items(), key=lambda item: item[1][0])[0][1][0],
+    #       sorted(bboxes.items(), key=lambda item: item[1][3], reverse=True)[0][1][3],
+    #       sorted(bboxes.items(), key=lambda item: item[1][2], reverse=True)[0][1][2],)
     return bboxes
