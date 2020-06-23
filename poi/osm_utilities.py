@@ -26,7 +26,7 @@ def query_osm_data(query, fpath):
     try:
         overpass_url = 'http://overpass-api.de/api/interpreter'
         response = requests.get(overpass_url, params={'data': query}).json()
-        with open(fpath, 'w') as f:
+        with open(fpath, 'w', encoding='utf8') as f:
             json.dump(response, f)
     except ValueError:
         print('Overpass api error: Trying again with a greater timeout...')

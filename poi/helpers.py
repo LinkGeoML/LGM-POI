@@ -17,7 +17,7 @@ def detect_alphabet(lstr):
 def parse_yaml(yml_file):
     yml_dict = None
 
-    with open(yml_file, 'r') as stream:
+    with open(yml_file, 'r', encoding='utf8') as stream:
         try:
             yml_dict = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
