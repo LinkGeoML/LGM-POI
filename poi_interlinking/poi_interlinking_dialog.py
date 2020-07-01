@@ -38,7 +38,6 @@ from qgis.PyQt.QtWidgets import QWidget
 from qgis.core import *
 from qgis.core import QgsFeature
 from qgis.gui import *
-#from qgis.gui import QgsMapLayerRegistry
 from qgis.utils import iface
 from shutil import copyfile
 
@@ -63,13 +62,7 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 	def __init__(self, parent=None):
 		"""Constructor."""
 		super(LgmInterlinkingDialog, self).__init__(parent)
-		# Set up the user interface from Designer through FORM_CLASS.
-		# After self.setupUi() you can access any designer object by doing
-		# self.<objectname>, and you can use autoconnect slots - see
-		# http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-		# #widgets-and-dialogs-with-auto-connect
 		self.setupUi(self)
-		#self.trainbtn.clicked.connect(self.TrainingSection)
 		self.input_databtn.clicked.connect(self.input_databtn_clicked)
 		self.run_btn.clicked.connect(self.run_btn_clicked)
 		self.show_resultsbtn.clicked.connect(self.show_resultsbtn_clicked)
@@ -94,33 +87,20 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 			mfullstr=str(file.getOpenFileName(self,"Open POI File to Classify ",dir_selection,"*csv"))
 			fname=mfullstr[2:mfullstr.index("'", 4, 1000)] # fname has the full path of the desired poi file
 			self.chosen_file.setText(fname)
-			#iface.messageBar().pushMessage("INFO: ","Input file selection completed.")
-			#QgsMessageLog.logMessage("Input file selection completed ",MESSAGE_CATEGORY, Qgis.Info)
+				
 		except FileNotFoundError:
 			QMessageBox.warning(self,"CAUTION","File selection cancelled")
 			self.chosen_file.clear()
 	
 		if len(self.chosen_file.text())<4:
-			#iface.messageBar().pushMessage("CAUTION: ","File selection cancelled. To proceed please select a csv file.",level=Qgis.Info,duration=10)
 			QMessageBox.warning(self,"CAUTION","File selection cancelled.To proceed please select a csv file.")
-			#QgsMessageLog.logMessage("Input file selection is cancelled ",MESSAGE_CATEGORY, Qgis.Info)
 			
-			#QgsMessageLog.logMessage('Started task "{}"'.format(self.description()),MESSAGE_CATEGORY, Qgis.Info)
+			
+			
 	
 	def run_btn_clicked(self):  # asks the user to execute the lgm library, shows some info with info button 
 		msgBox = QMessageBox.question(self,"EXECUTION"," Execute classification?",QMessageBox.Yes | QMessageBox.No,QMessageBox.Yes )
-		
-		#msgBox.setWindowTitle("DEPLOYMENT EXECUTION")
-		#msgBox.setText("Execute classification?")
-		#msgBox.setIcon(QMessageBox.Question)
-		#msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No | QMessageBox.Help)
-		#msgBox.setDefaultButton(QMessageBox.Yes)
-		#msgBox.exec_()
-		
 		if msgBox == QMessageBox.Yes:
-			#print("YES")
-			
-			
 			if "LGM-POI-master" in str(os.getcwd()):
 				pass
 			else:
@@ -138,10 +118,8 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 				progress.setAlignment(QtCore.Qt.AlignCenter)
 				progress.show()			
 				self.fpath = (self.chosen_file.text())
-				
-				#fpath.replace("//","\\\\")
 				command = f'python -m poi.cli eval --dataset {self.fpath}'
-				#print(command)
+				
 				try:
 					output = subprocess.run(command,shell=True,stderr=subprocess.STDOUT)
 					iface.messageBar().pushMessage("Success","Execution of process completed",level=Qgis.Success,duration = 25)
@@ -149,30 +127,18 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 				except Exception: #subprocess.CalledProcessError:
 					iface.messageBar().pushMessage("Failure","Execution of command failed {Exception}",level=Qgis.Critical,duration = 25)
 					QgsMessageLog.logMessage("Execution of command '{}' failed".format(self.Exception),MESSAGE_CATEGORY, Qgis.Warning)
-					#iface.messageBar().pushMessage("Failure","Execution of command failed",level=Qgis.Critical,duration = 15)
 					QMessageBox.warning(self,"Failure","Execution of command failed")
-				#print(subprocess.STDOUT)
-				#QMessageBox.information(self,"INFO",output)
-			
-			
+								
 		if msgBox == QMessageBox.No:
 			iface.messageBar().pushMessage("CAUTION","Execution of process cancelled",level=Qgis.Warning,duration = 15)
 			QgsMessageLog.logMessage("Execution of process cancelled",MESSAGE_CATEGORY, Qgis.Warning)
-			#print("No")
-			
-	
-		
-	
-	
-	def show_resultsbtn_clicked(self): #
-		
+				
+	def show_resultsbtn_clicked(self): 
 		prbar = QProgressBar()
 		prbar.setWindowTitle('Processing...')
 		prbar.move(600,600)
 		prbar.show()
 		
-		
-		#self.interlinking_results_csv = 'C:\\Users\\ivarkas\\AppData\\Roaming\\QGIS\\QGIS3\\profiles\\default\\python\\plugins\\poi_interlinking\\interlinked_pois.csv'
 		#### Check if the user has run the library by checking the existence of output folder ####
 		if "output" not in os.listdir(QgsApplication.qgisSettingsDirPath() + "\python\plugins\poi_interlinking\LGM-POI-master"):
 			QMessageBox.warning(self,"WARNING","Output folder is not created. Please press run in order to show the results")
@@ -183,26 +149,18 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 					if entry.name == "pois_dataset_pairs.csv" :
 						
 						self.interlinking_results_csv = QgsApplication.qgisSettingsDirPath() + "\python\plugins\poi_interlinking\LGM-POI-master\output" +"\\" + entry.name
-						#print(self.interlinking_results_csv)
-					#else:
-						#QMessageBox.warning(self,"WARNING","Output folder does not have the results (pois_dataset_pairs)")
 						
-		#self.interlinking_results_csv = self.fpath
-		
-		
-		
+					
+						
 			with open(self.interlinking_results_csv,newline='',encoding='utf-8') as csv_file:
 				csv_data = csv.reader(csv_file)
 				count=0
 				for row in csv_data:
-					#print(row)
 					count+=1
 		
 		
 			self.tableWidget.setRowCount(count)
-			#self.tableWidget.setRowCount(count)
 			self.tableWidget.setColumnCount(13)
-		
 		
 			with open(self.interlinking_results_csv,newline='',encoding='utf-8') as table_results:
 				results = csv.reader(table_results,delimiter=',',skipinitialspace='True')
@@ -210,9 +168,6 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 				rownum = 0
 				for row in results:
 				
-					
-				
-					#if len(str(row))>2:
 					if header != None:
 						self.tableWidget.setRowCount(count-1)
 					else:
@@ -232,31 +187,19 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 					item12 = QTableWidgetItem(row[11]) #spatial_dist(meters)
 					item13 = QTableWidgetItem(row[12]) #status
 				
-					#print(str(row[3]).replace("(","").replace(")","").split(" ",2))
-				
-				
 					self.tableWidget.setHorizontalHeaderLabels("source_id source_name source_tags source_geom osm_id osm_name osm_tags osm_geom tot_score name_dist tag_dist spatial_dist(meters) status".split())
 					self.tableWidget.horizontalHeader().setStyleSheet('background-color:silver')
 					self.tableWidget.verticalHeader().setStyleSheet('background-color:silver')
 				
 					font = QtGui.QFont()
 					font.setPointSize(12)
-				
-				
-				
 					self.tableWidget.horizontalHeader().setFont(font)
-				
 				
 					item4.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 					item8.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
 				
 					item4.setCheckState(QtCore.Qt.Unchecked)
 					item8.setCheckState(QtCore.Qt.Unchecked)
-				
-					#item4.setCheckState(True)
-					#item8.setCheckState(True)
-				
-				
 				
 					self.tableWidget.setItem(rownum,0, item1)
 					self.tableWidget.setItem(rownum,1, item2)
@@ -271,20 +214,11 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 					self.tableWidget.setItem(rownum,10, item11)
 					self.tableWidget.setItem(rownum,11, item12)
 					self.tableWidget.setItem(rownum,12, item13)
-				
-				
-				
 					rownum = rownum+1
 				
-				
 				self.tableWidget.resizeColumnsToContents()
-				
-		
-		
 			iface.messageBar().pushMessage("Results Loaded Successfully ",level=Qgis.Success,duration=16)
 			QgsMessageLog.logMessage("Results Loaded Successfully ",MESSAGE_CATEGORY, Qgis.Success)
-			#return self.tableWidget,interlinking_results_csv
-		
 			self.modified_results = str(os.getcwd()) + "\\modified_results.csv"
 			with open(self.interlinking_results_csv,'r',newline='',encoding='utf-8') as csv_results: 
 				with open(self.modified_results,'w',newline='',encoding = 'utf-8') as modified_csv:
@@ -294,49 +228,15 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 					next(reader)
 					counter=0
 					for i in reader:
-					#if interlinking_row='geodata_geom' and interlinking_row='osm_geom'
-						#temp11 = str(interlinking_row).replace('geodata_geom',"geodata_x,geodata_y").replace('osm_geom','osm_x,osm_y')
-						#writer.writerow(['geodata_id,geodata_name,geodata_tags,geodata_x,geodata_y,osm_id,osm_name,osm_tags,osm_x,osm_y,tot_score,name_dist,tag_dist,spatial_dist (meters),status'])
-						#temp1 = str(interlnking_row).replace("POINT","").replace()
-					
-						#print(i[3],i[7])	
 						if any(i):
-					
 							writer.writerow([i[0],i[1],i[2].replace("_",""),str(i[3].replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str(i[3].replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[4],i[5].replace("[","").replace("]","").replace("'",""),i[6].replace("[","").replace("]","").replace("(","").replace(")","").replace("'",""),str(i[7].replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str(i[7].replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[8],i[9],i[10],i[11],i[12]])
-					
 						counter=counter+1		
 		
-
-
-	
 	def geodata_poibtn_clicked(self):
-		# self.modified_results = str(os.getcwd()) + "\\modified_results.csv"
-		# with open(self.interlinking_results_csv,'r',newline='',encoding='utf-8') as csv_results: 
-			# with open(self.modified_results,'w',newline='',encoding = 'utf-8') as modified_csv:
-				# reader = csv.reader(csv_results,skipinitialspace='True')
-				# writer = csv.writer(modified_csv)#,fieldnames=['geodata_id,geodata_name,geodata_tags,geodata_x,geodata_y,osm_id,osm_name,osm_tags,osm_x,osm_y,tot_score,name_dist,tag_dist,spatial_dist (meters),status'])
-				# writer.writerow(['geodata_id','geodata_name','geodata_tags','geodata_x','geodata_y','osm_id','osm_name','osm_tags','osm_x','osm_y','tot_score','name_dist','tag_dist','spatial_dist(meters)','status'])
-				# next(reader)
-				# counter=0
-				# for i in reader:
-				# #if interlinking_row='geodata_geom' and interlinking_row='osm_geom'
-					# #temp11 = str(interlinking_row).replace('geodata_geom',"geodata_x,geodata_y").replace('osm_geom','osm_x,osm_y')
-					# #writer.writerow(['geodata_id,geodata_name,geodata_tags,geodata_x,geodata_y,osm_id,osm_name,osm_tags,osm_x,osm_y,tot_score,name_dist,tag_dist,spatial_dist (meters),status'])
-					# #temp1 = str(interlnking_row).replace("POINT","").replace()
-					
-					# #print(i[3],i[7])	
-					# if any(i):
-					
-						# writer.writerow([i[0],i[1],i[2].replace("_",""),str(i[3].replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str(i[3].replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[4],i[5].replace("[","").replace("]","").replace("'",""),i[6].replace("[","").replace("]","").replace("(","").replace(")","").replace("'",""),str(i[7].replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str(i[7].replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[8],i[9],i[10],i[11],i[12]])
-					
-					# counter=counter+1
-					
-		
 		if "output" not in os.listdir(QgsApplication.qgisSettingsDirPath() + "\python\plugins\poi_interlinking\LGM-POI-master"):
 			iface.messageBar().pushMessage("ATTENTION: ","Execute at least once (run) to load the results",level=Qgis.Warning,duration=15)
 			QgsMessageLog.logMessage("Execute at least once (run) to load the results ",MESSAGE_CATEGORY, Qgis.Warning)	
 			QMessageBox.warning(self,"WARNING","Output folder is not created. Please select input file and then press run in order to load the results as a layer")
-			
 		else:
 			QMessageBox.information(self,"INFO","Load Source Points")
 			geodata_pois = "file:///" + self.modified_results + "?delimiter={}&xField={}&yField={}".format(",", "source_x", "source_y")
@@ -460,7 +360,6 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 		QMessageBox.information(self,"INFO","Select where to save original results in a csv file")
 		user_path=str(QFileDialog.getSaveFileName(self,"Select where to save your CSV choices","C:\\","*.csv"))
 		user_path=user_path[2:user_path.index("'",4,1000)]
-		#print(user_path)
 		if len(user_path)>3:
 			with open(user_path ,'w+',newline='', encoding=' utf-8') as save_file, open(self.interlinking_results_csv,'r',newline='',encoding='utf-8')as results_file:
 				read_results_file = csv.reader(results_file)
@@ -480,12 +379,9 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 		
 		QMessageBox.information(self,"INFO","Select where to save your Results Table choices.")
 		user_path =str(QFileDialog.getSaveFileName(self,"Select where to save your CSV choices","C:\\",("*.csv")))
-		#self.user_path=user_path[2:user_path.index("'",4,1000)]
 		user_path=str(user_path[2:user_path.index("'",4,1000)])
-		#if len(self.user_path)>3 :
 		if len(user_path)>3 :
 			with open(user_path ,'w+',newline='', encoding=' utf-8') as user_file, open(self.interlinking_results_csv,'r',newline='',encoding='utf-8')as csv_read:
-			#with open(self.user_path ,'w+',newline='', encoding=' utf-8') as user_file, open(self.interlinking_results_csv,'r',newline='',encoding='utf-8')as csv_read:
 				csv_results_read=csv.reader(csv_read,skipinitialspace='True')
 				wr=csv.writer(user_file,escapechar='\n')
 			
@@ -494,8 +390,6 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 				count=0
 				for i in csv_results_read:
 					if self.tableWidget.item(count,3).checkState():
-						#writerow([i[0],i[1],i[2].replace("_",""),str(i[3].replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str(i[3].replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[4],i[5].replace("[","").replace("]","").replace("'",""),i[6].replace("[","").replace("]","").replace("(","").replace(")","").replace("'",""),str(i[7].replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str(i[7].replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[8],i[9],i[10],i[11],i[12]])
-						#wr.writerow([i[0],i[1],i[2],self.tableWidget.item(count,3).text(),i[4],i[5],i[6],i[7],i[8],i[9],i[10],i[11],i[12]])
 						wr.writerow([i[1],i[2].replace("_",""),str((self.tableWidget.item(count,3).text()).replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str((self.tableWidget.item(count,3).text()).replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[5].replace("[","").replace("]","").replace("'",""),i[6].replace("[","").replace("]","").replace("(","").replace(")","").replace("'",""),i[8],i[9],i[10],i[11],i[12],"source"])
 					if self.tableWidget.item(count,7).checkState():
 						wr.writerow([i[1],i[2].replace("_",""),str((self.tableWidget.item(count,7).text()).replace("POINT","").replace("(","").replace(")","").split()[:1]).replace("[","").replace("]","").replace("'",""),str((self.tableWidget.item(count,7).text()).replace("POINT","").replace("(","").replace(")","").split()[1:2]).replace("[","").replace("]","").replace("'",""),i[5].replace("[","").replace("]","").replace("'",""),i[6].replace("[","").replace("]","").replace("(","").replace(")","").replace("'",""),i[8],i[9],i[10],i[11],i[12],"OSM"])
@@ -507,29 +401,20 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 			iface.messageBar().pushMessage("INFO: ","Saving file is cancelled")
 			QgsMessageLog.logMessage("File selection cancelled. ",MESSAGE_CATEGORY, Qgis.Warning)
 			QMessageBox.information(self,"INFO","File selection cancelled.")
-		#return user_path
+		
 	
 	def load_table_choices_btn_clicked(self):
 		global user_path
 		msgBox = QMessageBox.question(self,"IMPORT"," Load user choices as a layer?",QMessageBox.Yes | QMessageBox.No,QMessageBox.Yes)
 		if msgBox == QMessageBox.Yes:
-			#print(self.save_table_choices_btn_clicked()[:])
-			
-			#print(user_path)
-			
-			#user_path=self.save_table_choices_btn_clicked()[:]
-			
 			if len(user_path)<4:
 				QMessageBox.information(self,"INFO","Please save the choices to load them as a layer.")
 			
 			else:
-			
-				#user_pois = "file:///" + self.user_path + "?delimiter={}&xField={}&yField={}".format(",", "x", "y")
 				user_pois = "file:///" + user_path + "?delimiter={}&xField={}&yField={}".format(",", "x", "y")
 				user_layer_csv = QgsVectorLayer(user_pois, "User Points", 'delimitedtext') # layer constructor
 				if user_layer_csv.isValid():
-				
-				
+								
 					layer_settings = QgsPalLayerSettings()
 					text_format = QgsTextFormat()
 					text_format.setFont(QFont("Arial", 10))
@@ -540,8 +425,7 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 					symbol = QgsFillSymbol.createSimple(properties)
 					symbol = QgsMarkerSymbol.createSimple({'name': 'triangle', 'color': 'green','size':'2.1'})
 					user_layer_csv.setRenderer(QgsSingleSymbolRenderer(symbol))
-		
-		
+				
 					buffer_settings = QgsTextBufferSettings()
 					buffer_settings.setEnabled(True)
 					buffer_settings.setSize(1)
@@ -550,9 +434,7 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 					text_format.setBuffer(buffer_settings)
 					layer_settings.setFormat(text_format)
 					layer_settings.fieldName = "source_name"
-		
 					layer_settings.enabled = True
-		
 					layer_settings = QgsVectorLayerSimpleLabeling(layer_settings)
 					user_layer_csv.setLabelsEnabled(True)
 					user_layer_csv.setLabeling(layer_settings)
@@ -567,7 +449,6 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 					config.setUiForm(uiform) #layout form of the individual pois
 		
 					user_layer_csv.setEditFormConfig(config)		
-		
 					QgsProject.instance().addMapLayer(user_layer_csv)		
 					iface.messageBar().pushMessage("Layer User Points is Loaded Successfully",level=Qgis.Success,duration=16)
 					QgsMessageLog.logMessage("Layer User Points is Loaded Successfully ",MESSAGE_CATEGORY, Qgis.Success)		
@@ -590,24 +471,14 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 	def tableWidgetpopup(self,event):
 		self.popupMenu = QMenu(self)
 		subMenu = QMenu(self.popupMenu)
-		#titleMenu = QCoreApplication.translate("Table Menu","Go to pois")
-		#subMenu.setTitle(titleMenu)
-		#subMenu.addAction(QCoreApplication.translate("Table Menu", "Show"))
-		
-		#subMenu.addSeparator()
 		self.popupMenu.addSeparator()
-		
 		Action2 = QAction("Go to current source address in map",self)
 		self.popupMenu.addAction(Action2)
-		
 		Action3 = QAction("Go to current osm address in map",self)
 		self.popupMenu.addAction(Action3)
-		
 		Action4 = QAction("Go to current user address in map",self)
 		self.popupMenu.addAction(Action4)
-		
 		self.popupMenu.popup(QtGui.QCursor.pos()) 
-		
 		Action2.triggered.connect(self.go_to_geodata_pois)
 		Action3.triggered.connect(self.go_to_osm_pois)
 		Action4.triggered.connect(self.go_to_user_pois)
@@ -616,20 +487,15 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 	def select_from_tableWidget(self):
 		r=self.tableWidget.selectionModel().currentIndex().row()
 		c=self.tableWidget.selectionModel().currentIndex().column()
-		#print(self.tableWidget.item(r,0).text()) #self.tableWidget.item(r,0).text() -> refers to id (poi_id) 
-		#print(self.tableWidget.item(r,1).text())
 		return self.tableWidget.item(r,0).text() #source_id	
 	
 	def go_to_geodata_pois(self):
-		
 		source_id = self.select_from_tableWidget()
 		alllayers = iface.mapCanvas().layers()
 		layer_names=[]
 		for layer in alllayers:
 			layer_names.append(layer.name())
-			
 			if (layer.name() == "Source Points"):
-				
 				current_Layer=layer
 				current_Layer.removeSelection()
 				current_Layer.selectByExpression("\"source_id\" = '{}'".format(source_id),QgsVectorLayer.SetSelection)
@@ -638,14 +504,11 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 				canvas = iface.mapCanvas()
 				canvas.zoomToSelected(current_Layer)
 				iface.mapCanvas().refresh()
-			
-				
 		if ("Source Points" not in layer_names):
 			QMessageBox.warning(self,"WARNING","Source Points should be loaded first")
 	
 	def go_to_osm_pois(self):
 		r = self.tableWidget.selectionModel().currentIndex().row()
-		
 		osm_name = self.tableWidget.item(r,4).text()
 		alllayers = iface.mapCanvas().layers()
 		layer_names = []
@@ -667,14 +530,11 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 	def go_to_user_pois(self):
 		r = self.tableWidget.selectionModel().currentIndex().row()
 		user_poi = self.tableWidget.item(r,1).text()
-		
 		alllayers = iface.mapCanvas().layers()
 		layer_names=[]
 		for layer in alllayers:
 			layer_names.append(layer.name())
-			
 			if (layer.name() == "User Points"):
-				
 				current_Layer=layer
 				current_Layer.removeSelection()
 				current_Layer.selectByExpression("\"source_name\" = '{}'".format(user_poi),QgsVectorLayer.SetSelection)
@@ -683,8 +543,7 @@ class LgmInterlinkingDialog(QtWidgets.QDialog, FORM_CLASS):
 				canvas = iface.mapCanvas()
 				canvas.zoomToSelected(current_Layer)
 				iface.mapCanvas().refresh()
-			
-				
+						
 		if ("User Points" not in layer_names):
 			QMessageBox.warning(self,"WARNING","User Points should be loaded first")		
 			
