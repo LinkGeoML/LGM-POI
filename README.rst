@@ -6,7 +6,7 @@ LGM-POI
 
 A python library for constructing candidate POI pairs among a custom source and OSM.
 
-The source code was tested using Python 3.6 and Scikit-Learn 0.23.1 on a Linux server.
+The source code was tested using Python 3.7 and Scikit-Learn 0.23.1 on a Linux server.
 
 Setup procedure
 ---------------
