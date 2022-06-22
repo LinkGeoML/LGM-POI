@@ -7,7 +7,7 @@ fiona==1.8.13.post1
 fuzzywuzzy==0.18.0
 geopandas==0.7.0
 munch==2.5.0
-numpy==1.18.5; python_version >= '3.5'
+numpy==1.22.0; python_version >= '3.5'
 pandas==1.0.5; python_full_version >= '3.6.1'
 pyyaml==5.3.1
 requests==2.24.0
